@@ -58,10 +58,15 @@ declare module '@/services/api' {
   export const fetchGasFees: (chain: Blockchain) => Promise<GasFee>;
   export const fetchDailyTransactions: () => Promise<Array<Record<string, any>>>;
   
-  // Datos mock para compatibilidad
-  export const dailyTransactions: Array<Record<string, any>>;
-  export const tvlData: Array<{name: string, value: number}>;
-  export const gasFeesData: Record<Blockchain, GasFee>;
+  // New getter functions
+  export const getTvlData: () => Promise<Array<{name: string, value: number}>>;
+  export const getGasFeesData: () => Promise<Record<Blockchain, GasFee>>;
+  export const getDailyTransactions: () => Promise<Array<Record<string, any>>>;
+  
+  // Deprecated - for backward compatibility only
+  export const dailyTransactions: Promise<Array<Record<string, any>>>;
+  export const tvlData: Promise<Array<{name: string, value: number}>>;
+  export const gasFeesData: Promise<Record<Blockchain, GasFee>>;
 }
 
 // Declaración para los hooks

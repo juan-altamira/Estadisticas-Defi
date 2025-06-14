@@ -129,17 +129,25 @@ export const fetchDailyTransactions = async () => {
   ];
 };
 
-// Export mock data for backward compatibility
-export const dailyTransactions = await fetchDailyTransactions();
-export const tvlData = await fetchTvlData();
-export const gasFeesData: Record<Blockchain, GasFee> = {
-  Ethereum: await fetchGasFees('Ethereum'),
-  BNBChain: await fetchGasFees('BNBChain'),
-  Base: await fetchGasFees('Base'),
-  Polygon: await fetchGasFees('Polygon'),
-  Arbitrum: await fetchGasFees('Arbitrum'),
-  Optimism: await fetchGasFees('Optimism'),
-  Bitcoin: await fetchGasFees('Bitcoin'),
-  Solana: await fetchGasFees('Solana'),
-  Tron: await fetchGasFees('Tron'),
+// Export functions to get data instead of direct values
+export const getDailyTransactions = fetchDailyTransactions;
+export const getTvlData = fetchTvlData;
+
+export const getGasFeesData = async (): Promise<Record<Blockchain, GasFee>> => {
+  return {
+    Ethereum: await fetchGasFees("Ethereum"),
+    BNBChain: await fetchGasFees("BNBChain"),
+    Base: await fetchGasFees("Base"),
+    Polygon: await fetchGasFees("Polygon"),
+    Arbitrum: await fetchGasFees("Arbitrum"),
+    Optimism: await fetchGasFees("Optimism"),
+    Bitcoin: await fetchGasFees("Bitcoin"),
+    Solana: await fetchGasFees("Solana"),
+    Tron: await fetchGasFees("Tron")
+  };
 };
+
+// For backward compatibility (deprecated)
+export const dailyTransactions = getDailyTransactions();
+export const tvlData = getTvlData();
+export const gasFeesData = getGasFeesData();
