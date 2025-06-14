@@ -1,0 +1,10 @@
+{
+  "daily_transactions": "Transacciones Diarias",
+  "tvl_distribution": "Distribución de TVL",
+  "gas_fees": "Tarifas de Gas",
+  "slow": "Lento",
+  "normal": "Normal",
+  "fast": "Rápido",
+  "language": "Idioma",
+  "theme": "Tema"
+}
