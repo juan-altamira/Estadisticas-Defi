@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --mode production",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm install && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.15",

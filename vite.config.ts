@@ -4,11 +4,19 @@ import { defineConfig } from "vite"
  
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/Estadisticas-Defi/' : '/',
+  base: '/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          vendor: ['@tanstack/react-query', 'recharts'],
+        },
+      },
+    },
   },
   resolve: {
     alias: {
