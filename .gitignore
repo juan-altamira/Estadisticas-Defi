@@ -124,3 +124,4 @@ coverage
 
 # Mac files
 .DS_Store
+.git-credentials
