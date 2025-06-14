@@ -4,10 +4,11 @@ import { defineConfig } from "vite"
  
 export default defineConfig({
   plugins: [react()],
-  base: "/",
+  base: process.env.NODE_ENV === 'production' ? '/Estadisticas-Defi/' : '/',
   build: {
-    outDir: "dist",
+    outDir: 'dist',
     emptyOutDir: true,
+    sourcemap: true,
   },
   resolve: {
     alias: {
