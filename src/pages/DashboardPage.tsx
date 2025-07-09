@@ -36,7 +36,7 @@ const DashboardPage = () => {
             size="sm" 
             onClick={handleRefresh}
             disabled={isLoading || isRefreshing}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             {t('common.refresh')}
@@ -47,8 +47,8 @@ const DashboardPage = () => {
 
       <main className="space-y-8">
         {/* TVL Evolution Chart */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-6">{t('dashboard.tvl_evolution')}</h2>
+        <Card className="p-6 bg-white dark:bg-gray-800 shadow-sm">
+          <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">{t('dashboard.tvl_evolution')}</h2>
           <div className="h-[600px]">
             <TvlEvolutionChart />
           </div>
@@ -58,17 +58,17 @@ const DashboardPage = () => {
             <h3 className="text-lg font-medium mb-4">{t('dashboard.tvl_breakdown')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {tvlBreakdownMay2025.map(({ language, tvl, color }) => (
-                <div key={language} className="flex items-center p-3 bg-gray-900/50 rounded-lg">
+                <div key={language} className="flex items-center p-3 bg-gray-100 dark:bg-gray-900/50 rounded-lg">
                   <div 
                     className="w-4 h-4 rounded-full mr-3" 
                     style={{ backgroundColor: color }}
                   />
                   <div className="flex-1">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-300">{language}</span>
-                      <span className="font-medium">${tvl.value.toFixed(2)}B</span>
+                      <span className="text-gray-700 dark:text-gray-300">{language}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">${tvl.value.toFixed(2)}B</span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
                       <div 
                         className="h-1.5 rounded-full" 
                         style={{
@@ -86,14 +86,14 @@ const DashboardPage = () => {
         </Card>
 
         {/* Top Row - Full Width */}
-        <Card className="p-6">
+        <Card className="p-6 bg-white dark:bg-gray-800 shadow-sm">
           <DailyTransactionsChart />
         </Card>
 
         {/* Middle Row - Distribution Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">{t('dashboard.tvl_by_category')}</h2>
+          <Card className="p-6 bg-white dark:bg-gray-800 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.tvl_by_category')}</h2>
             <div className="h-80">
               <DistributionCharts type="category" />
             </div>
