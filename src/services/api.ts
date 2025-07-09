@@ -1,6 +1,6 @@
 // This is a mock API service. In a real application, you would fetch this data from a backend.
 
-export type Blockchain = 'Ethereum' | 'BNBChain' | 'Base' | 'Polygon' | 'Arbitrum' | 'Optimism' | 'Bitcoin' | 'Solana' | 'Tron';
+export type Blockchain = 'Ethereum' | 'BNBChain' | 'Polygon' | 'Arbitrum' | 'Base' | 'Solana';
 
 export interface GasFee {
   slow: number;
@@ -15,9 +15,7 @@ const DEFILAMA_CHAIN_MAP: { [key: string]: string } = {
   "Base": "Base",
   "Polygon": "Polygon",
   "Arbitrum": "Arbitrum",
-  "Optimism": "Optimism",
-  "Solana": "Solana",
-  "Tron": "Tron",
+  "Solana": "Solana"
 };
 
 // Helper function to format TVL values
@@ -100,33 +98,72 @@ export const fetchGasFees = async (chain: Blockchain): Promise<GasFee> => {
     Base: { slow: 0.02, normal: 0.03, fast: 0.05 },
     Polygon: { slow: 0.01, normal: 0.02, fast: 0.03 },
     Arbitrum: { slow: 0.04, normal: 0.06, fast: 0.09 },
-    Optimism: { slow: 0.03, normal: 0.05, fast: 0.08 },
-    Solana: { slow: 0.001, normal: 0.002, fast: 0.003 },
-    Tron: { slow: 0.1, normal: 0.15, fast: 0.2 },
-    Bitcoin: { slow: 1.5, normal: 2.5, fast: 4.0 },
+    Solana: { slow: 0.001, normal: 0.002, fast: 0.003 }
   };
 
   return mockData[chain] || { slow: 0, normal: 0, fast: 0 };
 };
 
+type TimeRange = '1m' | '6m' | '1y';
+
 /**
  * Fetches Daily Transactions.
- * NOTE: This is a mock implementation.
+ * @param range Time range for the data (1m, 6m, 1y)
  */
-export const fetchDailyTransactions = async () => {
+export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  // Return mock data
-  return [
-    { date: '2023-01-01', Ethereum: 4000, BNBChain: 2400, Polygon: 1800, Arbitrum: 1200 },
-    { date: '2023-01-02', Ethereum: 3000, BNBChain: 1398, Polygon: 2210, Arbitrum: 1500 },
-    { date: '2023-01-03', Ethereum: 2000, BNBChain: 9800, Polygon: 2290, Arbitrum: 2000 },
-    { date: '2023-01-04', Ethereum: 2780, BNBChain: 3908, Polygon: 2000, Arbitrum: 2100 },
-    { date: '2023-01-05', Ethereum: 1890, BNBChain: 4800, Polygon: 2181, Arbitrum: 2500 },
-    { date: '2023-01-06', Ethereum: 2390, BNBChain: 3800, Polygon: 2500, Arbitrum: 2800 },
-    { date: '2023-01-07', Ethereum: 3490, BNBChain: 4300, Polygon: 2100, Arbitrum: 2200 },
-  ];
+  // Base data for 1 month (30 days)
+  const baseData = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (29 - i));
+    return {
+      date: date.toISOString().split('T')[0],
+      Ethereum: Math.floor(2000 + Math.random() * 5000),
+      BNBChain: Math.floor(1000 + Math.random() * 3000),
+      Polygon: Math.floor(500 + Math.random() * 2500),
+      Arbitrum: Math.floor(300 + Math.random() * 2000),
+      Base: Math.floor(400 + Math.random() * 1800),  // Added Base
+      Solana: Math.floor(600 + Math.random() * 2200), // Added Solana
+    };
+  });
+
+  if (range === '1m') {
+    return baseData;
+  }
+
+  // For 6 months, we'll show weekly data
+  if (range === '6m') {
+    return Array.from({ length: 26 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - ((25 - i) * 7));
+      return {
+        date: date.toISOString().split('T')[0],
+        Ethereum: Math.floor(2000 + Math.random() * 5000),
+        BNBChain: Math.floor(1000 + Math.random() * 3000),
+        Polygon: Math.floor(500 + Math.random() * 2500),
+        Arbitrum: Math.floor(300 + Math.random() * 2000),
+        Base: Math.floor(400 + Math.random() * 1800),  // Added Base
+        Solana: Math.floor(600 + Math.random() * 2200), // Added Solana
+      };
+    });
+  }
+
+  // For 1 year, we'll show monthly data
+  return Array.from({ length: 12 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - (11 - i));
+    return {
+      date: date.toISOString().split('T')[0],
+      Ethereum: Math.floor(2000 + Math.random() * 5000),
+      BNBChain: Math.floor(1000 + Math.random() * 3000),
+      Polygon: Math.floor(500 + Math.random() * 2500),
+      Arbitrum: Math.floor(300 + Math.random() * 2000),
+      Base: Math.floor(400 + Math.random() * 1800),  // Added Base
+      Solana: Math.floor(600 + Math.random() * 2200), // Added Solana
+    };
+  });
 };
 
 // Export functions to get data instead of direct values
@@ -140,10 +177,7 @@ export const getGasFeesData = async (): Promise<Record<Blockchain, GasFee>> => {
     Base: await fetchGasFees("Base"),
     Polygon: await fetchGasFees("Polygon"),
     Arbitrum: await fetchGasFees("Arbitrum"),
-    Optimism: await fetchGasFees("Optimism"),
-    Bitcoin: await fetchGasFees("Bitcoin"),
-    Solana: await fetchGasFees("Solana"),
-    Tron: await fetchGasFees("Tron")
+    Solana: await fetchGasFees("Solana")
   };
 };
 

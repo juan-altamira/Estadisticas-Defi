@@ -5,7 +5,9 @@ export const useTvlData = () => {
   return useQuery({
     queryKey: ['tvlData'],
     queryFn: getTvlData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    staleTime: 24 * 60 * 60 * 1000, // 24 horas
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false
   });
 };

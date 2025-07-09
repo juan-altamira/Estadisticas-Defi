@@ -1,7 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
+/* Elimina cualquier borde/blanco de los sectores de recharts Pie */
+.recharts-sector,
+.recharts-pie-sector,
+.recharts-pie path {
+  stroke: none !important;
+  stroke-width: 0 !important;
+  outline: none !important;
+  shape-rendering: geometricPrecision;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
