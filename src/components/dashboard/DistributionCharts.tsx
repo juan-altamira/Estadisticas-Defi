@@ -131,7 +131,7 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
               fill="#8884d8" 
               name="TVL (in billions)"
             >
-              {data.map((_: any, index: number) => (
+              {data.map((entry: any, index: number) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>
