@@ -119,31 +119,31 @@ export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
 
   // Si ya tenemos los datos generados, usamos el cache
   if (!_cachedYearlyTxData) {
-    // Generar olas aleatorias de duración e intensidad variable
-    function generateRandomWaves(days: number, baseAmplitude: number) {
-      const waves: Array<{start: number, end: number, strength: number, direction: number}> = [];
-      let currentDay = 0;
+    // Comentado temporalmente para resolver error de TypeScript
+    // function generateRandomWaves(days: number, baseAmplitude: number) {
+    //   const waves: Array<{start: number, end: number, strength: number, direction: number}> = [];
+    //   let currentDay = 0;
       
-      while (currentDay < days) {
-        // Duración aleatoria de la ola (entre 7 y 60 días para cambios más dinámicos)
-        const waveLength = Math.max(7, Math.floor(Math.random() * 60));
-        // Intensidad aleatoria (entre 0.8x y 1.5x de la amplitud base para cambios más notorios)
-        const strength = baseAmplitude * (0.8 + Math.random() * 0.7);
-        // Dirección aleatoria (alcista o bajista) con un pequeño sesgo alcista (60% alcista, 40% bajista)
-        const direction = Math.random() > 0.4 ? 1 : -1;
+    //   while (currentDay < days) {
+    //     // Duración aleatoria de la ola (entre 7 y 60 días para cambios más dinámicos)
+    //     const waveLength = Math.max(7, Math.floor(Math.random() * 60));
+    //     // Intensidad aleatoria (entre 0.8x y 1.5x de la amplitud base para cambios más notorios)
+    //     const strength = baseAmplitude * (0.8 + Math.random() * 0.7);
+    //     // Dirección aleatoria (alcista o bajista) con un pequeño sesgo alcista (60% alcista, 40% bajista)
+    //     const direction = Math.random() > 0.4 ? 1 : -1;
         
-        waves.push({
-          start: currentDay,
-          end: Math.min(currentDay + waveLength, days - 1),
-          strength,
-          direction
-        });
+    //     waves.push({
+    //       start: currentDay,
+    //       end: Math.min(currentDay + waveLength, days - 1),
+    //       strength,
+    //       direction
+    //     });
         
-        currentDay += waveLength;
-      }
+    //     currentDay += waveLength;
+    //   }
       
-      return waves;
-    }
+    //   return waves;
+    // }
 
     function simulateSeries({
       start, 
@@ -189,7 +189,7 @@ export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
               // Variación en la forma de la curva del evento
               curveShape: Math.random() * 2 - 1, // -1 a 1 para diferentes formas de curva
               // Variabilidad en la duración de las fases
-              phaseRatio: 0.3 + Math.random() * 0.4 // 30%-70% de la duración para la fase principal
+              // phaseRatio: 0.3 + Math.random() * 0.4 // 30%-70% de la duración para la fase principal
             }
           });
           
@@ -243,7 +243,7 @@ export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
               progressFactor = 1 - Math.pow(1 - eventProgress, 1 + curve * 2);
             }
             
-            const phaseRatio = event.params.phaseRatio;
+            // const phaseRatio = event.params.phaseRatio;
             
             switch(event.type) {
               case 0: // Tendencias alcistas
@@ -308,10 +308,10 @@ export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
     }
     const days = 365;
     // Función para asegurar que los valores se mantengan dentro de los rangos objetivo
-    const clampValue = (value: number, min: number, max: number) => {
-      // No redondear, solo asegurar los límites
-      return Math.max(min, Math.min(max, value));
-    };
+    // const clampValue = (value: number, min: number, max: number) => {
+    //   // No redondear, solo asegurar los límites
+    //   return Math.max(min, Math.min(max, value));
+    // };
 
     // Generar series para cada blockchain con sus rangos específicos
     // Ethereum con tendencia alcista pronunciada al final
