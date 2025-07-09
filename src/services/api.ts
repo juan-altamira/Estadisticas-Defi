@@ -116,30 +116,53 @@ let _cachedYearlyTxData: any[] | null = null;
 export async function fetchDailyTransactions(_range: TimeRange = '1m') {
   // Si ya tenemos los datos generados, usamos el cache
   if (!_cachedYearlyTxData) {
-    // Generar datos de transacciones diarias simuladas
+    // Generar datos de transacciones diarias simuladas para cada blockchain
     const now = new Date();
     const oneYearAgo = new Date(now);
     oneYearAgo.setFullYear(now.getFullYear() - 1);
     
     const days = Math.ceil((now.getTime() - oneYearAgo.getTime()) / (1000 * 60 * 60 * 24));
-    const baseValue = 1000;
-    const volatility = 0.1;
+    
+    // Valores base para cada blockchain
+    const baseValues = {
+      'Ethereum': 1000000,
+      'BNBChain': 3000000,
+      'Polygon': 2000000,
+      'Arbitrum': 1000000,
+      'Base': 2000000,
+      'Solana': 10000000
+    };
     
     const data = [];
-    let currentValue = baseValue;
     
+    // Generar datos para cada día
     for (let i = 0; i < days; i++) {
-      // Variación aleatoria suave
-      const change = (Math.random() * 2 - 1) * volatility * currentValue;
-      currentValue = Math.max(100, currentValue + change); // No permitir valores negativos
-      
       const date = new Date(oneYearAgo);
       date.setDate(date.getDate() + i);
       
-      data.push({
-        date: date.toISOString().split('T')[0],
-        transactions: Math.round(currentValue)
+      const dayData: Record<string, any> = {
+        date: date.toISOString().split('T')[0]
+      };
+      
+      // Generar datos para cada blockchain
+      Object.entries(baseValues).forEach(([chain, baseValue]) => {
+        // Variación aleatoria suave basada en el día y la cadena
+        const volatility = 0.1;
+        const seed = i * chain.length; // Semilla única para cada cadena y día
+        const random = Math.sin(seed) * 10000;
+        const randomValue = random - Math.floor(random); // Número pseudoaleatorio entre 0 y 1
+        
+        // Aplicar tendencia alcista con pequeñas variaciones diarias
+        const trend = 1 + (i / days) * 2; // Tendencias alcistas más pronunciadas
+        const dailyChange = (randomValue * 2 - 1) * volatility;
+        
+        // Calcular el valor final con tendencia y ruido
+        const value = Math.round(baseValue * trend * (1 + dailyChange));
+        
+        dayData[chain] = value;
       });
+      
+      data.push(dayData);
     }
     
     _cachedYearlyTxData = data;
