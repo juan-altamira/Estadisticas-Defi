@@ -85,7 +85,7 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
                 `${name}: ${(percent * 100).toFixed(0)}%`
               }
             >
-              {data.map((_: any, index: number) => (
+              {data.map((_, index) => (
                 <Cell 
                   key={`cell-${index}`} 
                   fill={COLORS[index % COLORS.length]} 
@@ -131,7 +131,7 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
               fill="#8884d8" 
               name="TVL (in billions)"
             >
-              {data.map((entry: any, index: number) => (
+              {data.map((_, index: number) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>

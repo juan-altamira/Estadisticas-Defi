@@ -113,288 +113,48 @@ type TimeRange = '1m' | '6m' | '1y';
 // Cache para los 365 días de datos generados una vez
 let _cachedYearlyTxData: any[] | null = null;
 
-export const fetchDailyTransactions = async (range: TimeRange = '1m') => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
+export async function fetchDailyTransactions(_range: TimeRange = '1m') {
   // Si ya tenemos los datos generados, usamos el cache
   if (!_cachedYearlyTxData) {
-    // Generar olas aleatorias de duración e intensidad variable
-    function generateRandomWaves(days: number, baseAmplitude: number) {
-      const waves: Array<{start: number, end: number, strength: number, direction: number}> = [];
-      let currentDay = 0;
+    // Generar datos de transacciones diarias simuladas
+    const now = new Date();
+    const oneYearAgo = new Date(now);
+    oneYearAgo.setFullYear(now.getFullYear() - 1);
+    
+    const days = Math.ceil((now.getTime() - oneYearAgo.getTime()) / (1000 * 60 * 60 * 24));
+    const baseValue = 1000;
+    const volatility = 0.1;
+    
+    const data = [];
+    let currentValue = baseValue;
+    
+    for (let i = 0; i < days; i++) {
+      // Variación aleatoria suave
+      const change = (Math.random() * 2 - 1) * volatility * currentValue;
+      currentValue = Math.max(100, currentValue + change); // No permitir valores negativos
       
-      while (currentDay < days) {
-        // Duración aleatoria de la ola (entre 7 y 60 días para cambios más dinámicos)
-        const waveLength = Math.max(7, Math.floor(Math.random() * 60));
-        // Intensidad aleatoria (entre 0.8x y 1.5x de la amplitud base para cambios más notorios)
-        const strength = baseAmplitude * (0.8 + Math.random() * 0.7);
-        // Dirección aleatoria (alcista o bajista) con un pequeño sesgo alcista (60% alcista, 40% bajista)
-        const direction = Math.random() > 0.4 ? 1 : -1;
-        
-        waves.push({
-          start: currentDay,
-          end: Math.min(currentDay + waveLength, days - 1),
-          strength,
-          direction
-        });
-        
-        currentDay += waveLength;
-      }
+      const date = new Date(oneYearAgo);
+      date.setDate(date.getDate() + i);
       
-      return waves;
-    }
-
-    function simulateSeries({
-      start, 
-      end, 
-      days, 
-      volatility = 0.1, 
-      min = start * 0.8,  // 20% por debajo del mínimo
-      max = end * 1.2,    // 20% por encima del máximo
-      endBias = 0.5,      // 0-1, qué tan concentrado está el crecimiento al final
-      spikes = []
-    }: {
-      start: number, 
-      end: number, 
-      days: number, 
-      volatility?: number, 
-      min?: number,
-      max?: number,
-      endBias?: number,
-      spikes?: Array<{pos: number, mult: number}>
-    }) {
-      const arr = [];
-      let value = start;
-      const avgValue = (start + end) / 2;
-      
-      // Sistema de eventos mensuales (más largos y significativos)
-      const events = [];
-      for (let i = 0; i < days; i++) {
-        // 5% de probabilidad de que comience un evento mensual
-        if (Math.random() < 0.05) {
-          // Duración del evento: entre 15 y 45 días (para cubrir variaciones mensuales)
-          const duration = 15 + Math.floor(Math.random() * 31);
-          // Intensidad: entre -30% y +50% del valor promedio (más suave pero más prolongado)
-          const intensity = (Math.random() * 1.6 - 0.6) * 0.5;
-          // Tipo de evento: 0 = tendencia alcista, 1 = tendencia bajista, 2 = corrección lateral
-          const eventType = Math.floor(Math.random() * 3);
-          
-          events.push({
-            startDay: i,
-            endDay: Math.min(i + duration - 1, days - 1),
-            intensity: intensity * (0.8 + Math.random() * 0.4), // Variabilidad en la intensidad
-            type: eventType,
-            params: {
-              // Variación en la forma de la curva del evento
-              curveShape: Math.random() * 2 - 1, // -1 a 1 para diferentes formas de curva
-              // Variabilidad en la duración de las fases
-              phaseRatio: 0.3 + Math.random() * 0.4 // 30%-70% de la duración para la fase principal
-            }
-          });
-          
-          // Saltar algunos días después de un evento para evitar superposiciones excesivas
-          i += Math.floor(duration * 0.7);
-        }
-      }
-
-      for (let i = 0; i < days; i++) {
-        // Tendencia base con ruido estocástico suave
-        let progress = i / (days - 1);
-        if (endBias > 0.5) {
-          // Aplicar curva de crecimiento exponencial para el final
-          const bias = (endBias - 0.5) * 2; // Convertir a rango 0-1
-          progress = Math.pow(progress, 1 + (bias * 3));
-        }
-        // Ruido de muy baja frecuencia para la tendencia base (variación mensual)
-        const monthlyNoise = Math.sin(i / 30 * Math.PI * 2) * 0.05 * progress;
-        let target = start + (end - start) * progress + monthlyNoise;
-        
-        // Máxima fluctuación diaria posible (15-25% de variación)
-        const dailyNoise = (Math.random() - 0.5) * volatility * target * 5.0;
-        
-        // Sin suavizado para máxima variación
-        const prevValue = arr.length > 0 ? arr[arr.length - 1] : target;
-        const smoothFactor = 0.1; // Solo 10% del valor anterior, 90% del nuevo
-        target = prevValue * smoothFactor + target * (1 - smoothFactor);
-        
-        // Múltiples capas de ruido para máxima variabilidad
-        const noise1 = (Math.random() - 0.5) * volatility * target * 1.5;
-        const noise2 = (Math.random() - 0.5) * volatility * target * 1.0;
-        target += noise1 + noise2;
-        
-        // Aplicar eventos activos (fluctuaciones mensuales)
-        let monthlyEffect = 0;
-        for (const event of events) {
-          if (i >= event.startDay && i <= event.endDay) {
-            const eventDuration = event.endDay - event.startDay;
-            const eventProgress = (i - event.startDay) / eventDuration;
-            let effect = 0;
-            
-            // Forma de la curva del evento
-            const curve = event.params.curveShape;
-            let progressFactor;
-            
-            if (curve < 0) {
-              // Curva cóncava (rápido al principio, lento al final)
-              progressFactor = Math.pow(eventProgress, 1 - curve * 2);
-            } else {
-              // Curva convexa (lento al principio, rápido al final)
-              progressFactor = 1 - Math.pow(1 - eventProgress, 1 + curve * 2);
-            }
-            
-            const phaseRatio = event.params.phaseRatio;
-            
-            switch(event.type) {
-              case 0: // Tendencias alcistas
-                effect = progressFactor * event.intensity * avgValue * 0.8;
-                break;
-                
-              case 1: // Tendencias bajistas
-                effect = -progressFactor * event.intensity * avgValue * 0.6;
-                break;
-                
-              case 2: // Correcciones laterales (sube y baja)
-                const cycleProgress = (i % 30) / 30; // Ciclo de ~1 mes
-                effect = Math.sin(cycleProgress * Math.PI * 2) * event.intensity * avgValue * 0.4;
-                break;
-            }
-            
-            // Aplicar efecto de entrada/salida suave
-            const fadeIn = Math.min(1, (i - event.startDay) / (eventDuration * 0.2));
-            const fadeOut = Math.min(1, (event.endDay - i) / (eventDuration * 0.2));
-            const fade = Math.min(fadeIn, fadeOut, 1);
-            
-            monthlyEffect += effect * fade;
-          }
-        }
-        
-        // Picos programados (si los hay)
-        let spikeMult = 1;
-        for (const s of spikes) {
-          if (i === s.pos) spikeMult = s.mult;
-        }
-        
-        // Máximo peso en la variabilidad diaria
-        const baseWeight = 0.4;    // Solo 40% de peso en la tendencia
-        const noiseWeight = 1.2;   // 120% de peso en el ruido diario
-        const eventWeight = 0.4;   // 40% de peso en los eventos mensuales
-        
-        // Calcular el valor con máxima variabilidad
-        const baseNoise = (Math.random() - 0.5) * volatility * target * 0.8;
-        let baseValue = target * baseWeight + (dailyNoise + baseNoise) * noiseWeight;
-        
-        // Aplicar el efecto mensual con variabilidad adicional
-        const monthlyVariation = 0.8 + Math.random() * 0.4; // 80-120% de variación
-        value = (baseValue + monthlyEffect * eventWeight * monthlyVariation) * spikeMult;
-        
-        // Asegurar que el valor esté dentro de los rangos permitidos
-        value = Math.max(min * 0.9, Math.min(max * 1.1, value));
-        
-        // No redondear para mantener precisión en los valores
-        // Los valores se formatearán en el frontend según sea necesario
-        
-        // Suavizar transiciones con el valor anterior
-        if (arr.length > 0) {
-          const prevValue = arr[arr.length - 1];
-          const smoothing = 0.9; // 90% del valor anterior, 10% del nuevo
-          value = prevValue * smoothing + value * (1 - smoothing);
-        }
-        
-        arr.push(Math.round(value));
-      }
-      
-      return arr;
-    }
-    const days = 365;
-    // Función para asegurar que los valores se mantengan dentro de los rangos objetivo
-    const clampValue = (value: number, min: number, max: number) => {
-      // No redondear, solo asegurar los límites
-      return Math.max(min, Math.min(max, value));
-    };
-
-    // Generar series para cada blockchain con sus rangos específicos
-    // Ethereum con tendencia alcista pronunciada al final
-    const eth = simulateSeries({ 
-      start: 1000000, 
-      end: 2000000,  // Aumentado de 1.5M a 2M para mayor tendencia alcista
-      days, 
-      volatility: 0.15,
-      min: 800000,
-      max: 2200000,  // Aumentado el máximo para permitir la tendencia
-      endBias: 0.7  // 70% del crecimiento ocurre en el último tercio
-    });
-
-    // BNB Chain con fuerte tendencia alcista al final
-    const bnb = simulateSeries({ 
-      start: 3000000, 
-      end: 18000000,  // Aumentado de 14M a 18M para tendencia más pronunciada
-      days, 
-      volatility: 0.25,
-      min: 2500000,
-      max: 20000000,  // Aumentado el máximo
-      endBias: 0.8   // 80% del crecimiento en el último tercio
-    });
-
-    const polygon = simulateSeries({ 
-      start: 2000000, 
-      end: 3600000, 
-      days, 
-      volatility: 0.18,
-      min: 1800000,    // Mínimo 1.8M
-      max: 4000000     // Máximo 4M
-    });
-
-    const arbitrum = simulateSeries({ 
-      start: 1000000, 
-      end: 2000000, 
-      days, 
-      volatility: 0.15,
-      min: 800000,     // Mínimo 800K
-      max: 2200000     // Máximo 2.2M
-    });
-
-    // Base con fuerte tendencia alcista al final
-    const base = simulateSeries({ 
-      start: 2000000, 
-      end: 15000000,  // Aumentado de 10M a 15M para tendencia más pronunciada
-      days, 
-      volatility: 0.22,
-      min: 1800000,
-      max: 16000000,  // Aumentado el máximo
-      endBias: 0.75   // 75% del crecimiento en el último tercio
-    });
-
-    const solana = simulateSeries({ 
-      start: 10000000, 
-      end: 28000000, 
-      days, 
-      volatility: 0.3,  // Máxima volatilidad para Solana
-      min: 9000000,    // Mínimo 9M
-      max: 30000000    // Máximo 30M
-    });
-    _cachedYearlyTxData = Array.from({ length: days }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (days - 1 - i));
-      return {
+      data.push({
         date: date.toISOString().split('T')[0],
-        Ethereum: eth[i],
-        BNBChain: bnb[i],
-        Polygon: polygon[i],
-        Arbitrum: arbitrum[i],
-        Base: base[i],
-        Solana: solana[i],
-        Tron: 0,
-        Bitcoin: 0
-      };
-    });
+        transactions: Math.round(currentValue)
+      });
+    }
+    
+    _cachedYearlyTxData = data;
   }
-
-  if (range === '1y') return _cachedYearlyTxData;
-  if (range === '6m') return _cachedYearlyTxData.slice(-180);
-  if (range === '1m') return _cachedYearlyTxData.slice(-30);
-  // fallback: todo el año
-  return _cachedYearlyTxData;
+  
+  // Filtrar datos según el rango solicitado
+  let filteredData = [..._cachedYearlyTxData];
+  
+  if (_range === '1m') {
+    filteredData = _cachedYearlyTxData.slice(-30);
+  } else if (_range === '6m') {
+    filteredData = _cachedYearlyTxData.slice(-180);
+  }
+  
+  return filteredData;
 };
 
 // Export functions to get data instead of direct values
