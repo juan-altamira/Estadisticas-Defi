@@ -284,8 +284,12 @@ const DailyTransactionsChart = () => {
                   }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v}
-                  width={36}
+                  tickFormatter={v => v >= 1000000 
+                    ? `${(v/1000000).toFixed(1)}M` 
+                    : v >= 1000 
+                      ? `${(v/1000).toFixed(0)}K` 
+                      : v}
+                  width={50}
                   tickCount={5}
                 />
                 <Tooltip 
@@ -334,13 +338,17 @@ const DailyTransactionsChart = () => {
                           <span className="font-medium text-sm">{name}</span>
                         </div>
                         <span 
-                          className="font-mono text-sm font-semibold px-2 py-0.5 rounded-md"
+                          className="font-mono text-sm font-semibold px-2 py-0.5 rounded-md whitespace-nowrap"
                           style={{ 
                             backgroundColor: `${chainInfo.color}10`,
                             color: chainInfo.color
                           }}
                         >
-                          {Number(value).toLocaleString()}
+                          {Number(value).toLocaleString('en-US', { 
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                            useGrouping: true
+                          })}
                         </span>
                       </div>
                     ];

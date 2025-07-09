@@ -28,7 +28,13 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
   const { t } = useTranslation();
   const { categories, chains, isLoading } = useDefi();
 
-  const data = type === 'category' ? categories : chains;
+  // Ensure consistent ordering for chains with 'Others' always last
+  const sortedChains = [...(chains || [])].sort((a, b) => {
+    if (a.name === 'Others') return 1;
+    if (b.name === 'Others') return -1;
+    return b.value - a.value;
+  });
+  const data = type === 'category' ? categories : sortedChains;
   const title = type === 'category' 
     ? t('dashboard.tvl_by_category')
     : t('dashboard.tvl_by_chain');
@@ -99,7 +105,14 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
         ) : (
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis 
+              dataKey="name"
+              tick={{ fontSize: 12 }}
+              interval={0}
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
             <YAxis 
               tickFormatter={(value) => `$${value}B`}
               width={60}
@@ -113,7 +126,15 @@ export default function DistributionCharts({ type }: DistributionChartsProps) {
               }
             />
             <Legend />
-            <Bar dataKey="value" fill="#8884d8" name="TVL (in billions)" />
+            <Bar 
+              dataKey="value" 
+              fill="#8884d8" 
+              name="TVL (in billions)"
+            >
+              {data.map((entry: any, index: number) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
           </BarChart>
         )}
       </ResponsiveContainer>

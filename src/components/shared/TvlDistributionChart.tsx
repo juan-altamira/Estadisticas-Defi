@@ -169,13 +169,34 @@ const TvlDistributionChart = () => {
                 cy="50%"
                 innerRadius="60%"
                 outerRadius="90%"
-                paddingAngle={0}
+                paddingAngle={2}
                 dataKey="value"
                 nameKey="name"
                 animationBegin={0}
                 animationDuration={1000}
                 animationEasing="ease-out"
-                label={false}
+                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                  const RADIAN = Math.PI / 180;
+                  const radius = 25 + innerRadius + (outerRadius - innerRadius);
+                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                  
+                  // Only show label if segment is big enough
+                  if (percent < 0.05) return null;
+                  
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      fill="currentColor"
+                      textAnchor={x > cx ? 'start' : 'end'}
+                      dominantBaseline="central"
+                      className="text-xs font-medium fill-foreground/80 dark:fill-foreground/80 pointer-events-none"
+                    >
+                      {`${tvlData[index].name} (${(percent * 100).toFixed(1)}%)`}
+                    </text>
+                  );
+                }}
                 labelLine={false}
                 isAnimationActive={true}
                 stroke="none"
@@ -196,9 +217,10 @@ const TvlDistributionChart = () => {
                 ))}
                 
                 <Label
-                  value="TVL"
+                  value={tvlData.map(item => `${item.name}: ${((item.value / totalTvl) * 100).toFixed(1)}%`).join('\n')}
                   position="center"
-                  className="text-sm font-medium fill-muted-foreground"
+                  className="text-xs font-medium fill-foreground/70 dark:fill-foreground/70 text-center"
+                  style={{ whiteSpace: 'pre' }}
                 />
               </Pie>
               
@@ -206,6 +228,7 @@ const TvlDistributionChart = () => {
                 content={<CustomTooltip />}
                 wrapperStyle={{
                   zIndex: 1000,
+                  backgroundColor: 'var(--background)'
                 }}
               />
               

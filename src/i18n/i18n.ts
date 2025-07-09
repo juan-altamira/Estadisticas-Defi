@@ -63,6 +63,19 @@ const en = {
       normal: 'Normal',
       fast: 'Fast',
     },
+    blockchain_metrics: {
+      title: 'Blockchain Metrics',
+      protocols: 'Protocols',
+      active_addresses: 'Active Addresses',
+      change_1d: '1d Change',
+      change_7d: '7d Change',
+      change_1m: '1m Change',
+      defi_tvl: 'DeFi TVL',
+      bridged_tvl: 'Bridged TVL',
+      stables: 'Stables',
+      volume_24h: '24h DEXs Volume',
+      fees_24h: '24h Chain Fees',
+    },
   }
 };
 
@@ -127,6 +140,19 @@ const es = {
       slow: 'Lento',
       normal: 'Normal',
       fast: 'Rápido',
+    },
+    blockchain_metrics: {
+      title: 'Métricas de Blockchain',
+      protocols: 'Protocolos',
+      active_addresses: 'Direcciones Activas',
+      change_1d: 'Cambio 1d',
+      change_7d: 'Cambio 7d',
+      change_1m: 'Cambio 1m',
+      defi_tvl: 'TVL DeFi',
+      bridged_tvl: 'TVL Puenteado',
+      stables: 'Estables',
+      volume_24h: 'Volumen DEXs 24h',
+      fees_24h: 'Tarifas 24h',
     },
   }
 };

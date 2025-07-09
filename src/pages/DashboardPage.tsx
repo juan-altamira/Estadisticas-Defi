@@ -7,7 +7,7 @@ import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import DailyTransactionsChart from "@/components/shared/DailyTransactionsChart";
 import DistributionCharts from "@/components/dashboard/DistributionCharts";
-import ProtocolsTable from "@/components/dashboard/ProtocolsTable";
+import ChainsTable from "@/components/dashboard/ChainsTable";
 import TvlEvolutionChart from "@/components/shared/TvlEvolutionChart";
 import { useDefi } from "@/contexts/DefiContext";
 import { tvlBreakdownMay2025 } from "@/constants/tvlBreakdown";
@@ -106,12 +106,14 @@ const DashboardPage = () => {
           </Card>
         </div>
 
-        {/* Bottom Row - Protocols Table */}
+        {/* Bottom Row - Blockchain Metrics Table */}
         <Card className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">{t('dashboard.top_protocols')}</h2>
+            <h2 className="text-lg font-semibold">{t('blockchain_metrics.title')}</h2>
           </div>
-          <ProtocolsTable />
+          <div className="overflow-x-auto">
+            <ChainsTable />
+          </div>
         </Card>
       </main>
 
