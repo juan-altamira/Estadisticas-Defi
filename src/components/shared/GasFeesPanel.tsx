@@ -7,7 +7,7 @@ import { Flame, Zap, Turtle, Loader2, AlertCircle } from 'lucide-react';
 import { useGasFees } from '@/hooks/useGasFees';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const blockchains: Blockchain[] = ['Ethereum', 'BNBChain', 'Base', 'Polygon', 'Arbitrum', 'Optimism', 'Solana', 'Tron'];
+const blockchains: Blockchain[] = ['Ethereum', 'BNBChain', 'Polygon', 'Arbitrum', 'Base', 'Solana'];
 
 const GasFeesPanel = () => {
   const { t } = useTranslation();

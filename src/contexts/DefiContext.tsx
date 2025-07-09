@@ -61,11 +61,11 @@ export function DefiProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Usar datos fijos para TVL
-  const tvlData = FIXED_CHAINS_DATA;
+  // Datos fijos para TVL (se usa en el contexto pero no se asigna a una variable)
+  // FIXED_CHAINS_DATA se usa directamente en los componentes
 
   // Fetch gas fees for different chains (mantenemos esto si es necesario para otras funcionalidades)
-  const { refetch: refetchGasFees } = useQuery({
+  useQuery({
     queryKey: ['gasFees'],
     queryFn: () => Promise.all([
       fetchGasFees('Ethereum'),
@@ -78,7 +78,7 @@ export function DefiProvider({ children }: { children: ReactNode }) {
   });
 
   // Fetch daily transactions
-  const { refetch: refetchDailyTxs } = useQuery({
+  useQuery({
     queryKey: ['dailyTransactions'],
     queryFn: () => fetchDailyTransactions('1m'),
     staleTime: 5 * 60 * 1000, // 5 minutes

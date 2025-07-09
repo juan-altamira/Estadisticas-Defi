@@ -130,20 +130,14 @@ const DailyTransactionsChart = () => {
   // Get all available chain names from the first data point (excluding 'date' key)
   const allChainNames: Blockchain[] = Object.keys(enabledChains) as Blockchain[];
   
-  // Filter to only include enabled chains
-  const visibleChainNames = allChainNames.filter(chain => enabledChains[chain]);
-  
   // Modern color palette with better contrast and visual appeal
   const colors = [
     '#3b82f6', // Ethereum blue
     '#f59e0b', // BNB orange
     '#8b5cf6', // Polygon purple
     '#10b981', // Arbitrum green
-    '#ef4444', // Optimism red
     '#6366f1', // Base indigo
     '#14b8a6', // Solana teal
-    '#f43f5e', // Tron pink
-    '#f97316', // Bitcoin orange
   ];
   
   // Enhanced chain data with better icons and colors
@@ -152,11 +146,8 @@ const DailyTransactionsChart = () => {
     'BNBChain': { icon: '🅱️', color: colors[1] },
     'Polygon': { icon: '⬡', color: colors[2] },
     'Arbitrum': { icon: '⏩', color: colors[3] },
-    'Optimism': { icon: '⚡', color: colors[4] },
-    'Base': { icon: '🅱️', color: colors[5] },
-    'Solana': { icon: '◎', color: colors[6] },
-    'Tron': { icon: '🅃', color: colors[7] },
-    'Bitcoin': { icon: '₿', color: colors[8] },
+    'Base': { icon: '🅱️', color: colors[4] },
+    'Solana': { icon: '◎', color: colors[5] },
   };
   
   // Helper function to safely get chain data with type safety
